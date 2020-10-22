@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+<link rel = "stylesheet" type = "text/css" href = "mystyle.css" />
+</head>
+<body>
+
+<h1 align= "center"> Create Account </h1>
+	
+<form name = "create_account" method="post" action = "create_account.php" onsubmit = "return create_account()">	  
+  <div class="usercreate">
+	<h2> Enter Information Below: </h2>
+    <label for="u_username"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="u_username" required>
+
+    <label for="uemail"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="uemail" required>
+	
+	<label for = "password"><b>Password</b></label>
+	<input type="text" placeholder="Enter Password" name="password" required>
+	
+	<p> <strong> Security Question: What was the first podcast you listened to? </strong> </p>
+	<label for ="question_answer"><b>Answer</b></label>
+	<input type = "text" placeholder="Answer" name = "question_answer" required>   
+	
+	<label for = "type"><b>Podcast Listener or Host?</b></label>
+	<input type="text" placeholder="Enter User Type" name="type" required>   
+	
+    <button type="submit">Create Account</button>
+  </div>
+
+</body>
+</html>

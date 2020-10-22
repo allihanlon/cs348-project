@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+	<link rel = "stylesheet" type = "text/css" href = "mystyle.css" />
+</head>
+<body>
+
+<button class="button" onclick="openPage('Home', this)" id="defaultOpen">Home</button>
+<button class="button" onclick="openPage('About', this)">About</button>
+<button class="button" onclick="openPage('Contact', this)">Contact</button>
+
+<div id="Home" class="tabcontent">
+  <p>	<h1> Two Peas in  a Podcast </h1>
+
+	<form name = "user" method="post" action="user.php" onsubmit = "return user_check()">
+
+	  <div class="userlogin">
+		<h2> Login below </h2>
+	    <label for="u_username"><b>Username</b></label>
+	    <input type="user" placeholder="Enter Username" name="u_username" required>
+
+	    <label for="password"><b>Password</b></label>
+	    <input type="password" placeholder="Enter Password" name="password" required>    
+	    <button type="submit" name = "user_login" >Login</button>
+	
+		<p> <a href="https://web.ics.purdue.edu/~g1117061/forgot_password.html">Forgot Password?</a></p>
+		<p> <a href="https://web.ics.purdue.edu/~g1117061/create_account.html">Create Account</a></p>
+	  </div></p>
+</div>
+
+
+<div id="Contact" class="tabcontent">
+  <h1>Contact Us: </h1>
+  
+  <form action="" method="post">
+	First Name: <input type="text" name="first_name"><br>
+	Last Name: <input type="text" name="last_name"><br>
+	Email: <input type="text" name="email"><br>
+	Message:<br><textarea rows="5" name="message" cols="70"></textarea><br>
+	<input type="submit" name="submit" value="Submit">
+   </form>
+	
+   <?php 
+	if(isset($_POST['submit'])){
+    $to = "hanlona@purdue.edu"; // this is Alli's email address
+	$to2 = "aaunger@purdue.edu"; // this is Annah's email address
+    $from = $_POST['email']; // this is the sender's email address
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $subject = "Form submission";
+    $subject2 = "Copy of your form submission";
+    $message = $first_name . " " . $last_name . " wrote the following:" . "\n\n" . $_POST['message'];
+    $message2 = "Here is a copy of your message " . $first_name . "\n\n" . $_POST['message'];
+
+    $headers = "From:" . $from;
+    $headers2 = "From:" . $to;
+    mail($to,$subject,$message,$headers);    
+	mail($to2,$subject,$message,$headers);
+    mail($from,$subject2,$message2,$headers2); // sends a copy of the message to the sender
+    echo "Mail Sent. Thank you " . $first_name . ", we will contact you shortly.";
+    }
+   ?>
+   
+   <p><img src="linkedin.png" alt="linkedin" width = 20, height = 20><a href = "https://www.linkedin.com">LinkedIn</a></p>
+   <img src="insta.png" alt="insta" width = 20, height = 20> <a href = "https://www.instagram.com">Instagram</a></p>
+	
+</div>
+
+<div id="About" class="tabcontent">
+  <h1 id="aboutUS">About Two Peas in a Podcast: </h1>
+  <h2 class = "slogan"> We could probably come up with a slogan </h2>
+  <div id ="VALUES">
+  	
+	<p> Three Peas in a Podcast content/information here :-) </p>
+  </div>
+  <h2> Meet the Peas in the Podcast: </h2>
+
+<div class="row">
+  <div class="column">
+	<img src="Annah.png" alt="annah" width = 180, height = 240>
+  	<h3> Annah Aunger</h3>
+  </div>
+  <div class="column">
+	<img src="Alli.jpg" alt="alli" width = 180, height = 240>
+  	<h3> Alli Hanlon </h3>
+  </div>
+</div>
+</div>
+
+
+<script>
+function openPage(pageName, elmnt, color) {
+  // Hide all elements with class="tabcontent" by default */
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Remove the background color of all tablinks/buttons
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = "";
+  }
+
+  // Show the specific tab content
+  document.getElementById(pageName).style.display = "block";
+
+  // Add the specific color to the button used to open the tab content
+  elmnt.style.backgroundColor = color;
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+
+</body>
+</html>
