@@ -1,6 +1,8 @@
 <html>
+<title>Create Account</title>
 <head>
 	<link rel = "stylesheet" type = "text/css" href = "mystyle.css" />
+	<link rel="icon" href="peaspod.jpeg" type="image/png" sizes="16x16">
 </head>
 </html>
 
@@ -29,7 +31,11 @@ $dbname = "g1117061";
 // Create connection
 $conn = mysqli_connect($servername, $username, $password , $dbname);
 
-$query = mysqli_query($conn, "SELECT * FROM User WHERE username = '$username'");
+if (!$conn) {
+	die("Connection failed: " . mysqli_connect_error());
+}
+
+$query = mysqli_query($conn, "SELECT * FROM User WHERE username = '$u_username'");
 if (mysqli_num_rows($query) != 0) {
 	echo "Sorry, this username already exists! Click Link below to redirect to create account page: ";	
 	echo "<br><a href=https://web.ics.purdue.edu/~g1117061/create_account.html>Create Account Page</a>";
@@ -37,7 +43,11 @@ if (mysqli_num_rows($query) != 0) {
 else{
 	$sql1 = "INSERT INTO User (username, password, email, userType, securityQuestion) VALUES ('$u_username','$u_password','$uemail','$u_type','$u_answer');";
 	$result1 = mysqli_query($conn, $sql1);
-	header("Location:https://web.ics.purdue.edu/~g1117061");
+	if ($u_type == 'host') {
+		header("Location:https://web.ics.purdue.edu/~g1117061/hostAddPodcast.php");
+	} else {
+		header("Location:https://web.ics.purdue.edu/~g1117061");
+	}
 }
 
 mysqli_close($conn);

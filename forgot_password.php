@@ -1,6 +1,8 @@
 <html>
+<title>Forgot Password</title>
 <head>
 	<link rel = "stylesheet" type = "text/css" href = "mystyle.css" />
+	<link rel="icon" href="peaspod.jpeg" type="image/png" sizes="16x16">
 </head>
 </html>
 

@@ -14,17 +14,19 @@
     <input type="text" placeholder="Enter Username" name="u_username" required>
 
     <label for="uemail"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="uemail" required>
+    <input type="email" placeholder="Enter Email" name="uemail" required>
 	
 	<label for = "password"><b>Password</b></label>
-	<input type="text" placeholder="Enter Password" name="password" required>
+	<input type="password" placeholder="Enter Password" name="password" required>
 	
 	<p> <strong> Security Question: What was the first podcast you listened to? </strong> </p>
 	<label for ="question_answer"><b>Answer</b></label>
 	<input type = "text" placeholder="Answer" name = "question_answer" required>   
 	
 	<label for = "type"><b>Podcast Listener or Host?</b></label>
-	<input type="text" placeholder="Enter User Type" name="type" required>   
+	<select id="type", name = "type">
+		<option value = "host">host</option>
+		<option value = "listener">listener</option></select>
 	
     <button type="submit">Create Account</button>
   </div>

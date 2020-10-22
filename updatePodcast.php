@@ -44,7 +44,7 @@ if($Pquery){
 
 //Update the podcast description that the host chooses
 $update = 'UPDATE Podcast SET genre =\''. $genre . '\', description=\''. $description . '\' WHERE podcastTitle=\''. $Ptitle . '\';';
-echo $update;
+//echo $update;
 $updateQuery = mysqli_query($conn, $update);
 
 //Print the request

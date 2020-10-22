@@ -22,13 +22,6 @@
 	        return false; 
 	    }
 		
-		if (genre.value.length < 0 || genre.value.length > 20 || genre.value == "")                                  
-	    { 
-	        window.alert("Genre is either empty, too long."); 
-	        email.focus(); 
-	        return false; 
-	    }
-		
 		if (pTitle.value.length < 0 || pTitle.value.length > 100 || pTitle.value == "")                                  
 	    { 
 	        window.alert("Podcast title is either empty, too long."); 
@@ -86,7 +79,7 @@
 </head>
 
 <body>
-
+<h1> Two Peas in a Podcast Host Homepage </h1>
 
 <div id="main">
 
@@ -97,10 +90,16 @@
 	<h4>Update Podcast Information:</h4>
 	<form name = "podcastForm" onsubmit="return ValidatePodcast()" action="updatePodcast.php" method = "post">
 	
-	<table width= "40%">
+	<table width= "50%">
 	<tr><td> Your Username: <input type="text" size=20 name="username" value = "gretchenrubin">
-	</td><td> Podcast Title: <input type="text" size=20 name="pTitle" value = "Happier"> 
-	</td><td> Genre: <input type="text" size=20 name="genre" value = "Society and Culture"> 
+	</td><td> Podcast Title: <input type="text" size=20 name="pTitle" value = "Happier">
+	</td><td> Genre: <select id="genre", name = "genre">
+						<option value = "Comedy">Comedy</option>
+						<option value = "News">News</option>
+						<option value = "Society and Culture">Society and Culture</option>
+						<option value = "Sports">Sports</option>
+						<option value = "True Crime">True Crime</option>
+						<option value = "Other">Other</option></select></td>
 	</td><td> Description: <input type="text" size=70 name="description"  value= "practical, manageable advice about happiness">
 	</td><td><input type = "submit" name = "submit" value="Submit here" />
 	</table>
@@ -110,14 +109,14 @@
 	
 	<div class = "Update Episode">
 
-	<h4>Update Episode Information:</h4>
+	<h4>Update or Edit Episode Information:</h4>
 	<form name = "episodeForm" onsubmit="return ValidateEpisode()" action="updateEpisode.php" method = "post">
 	
 	<table width= "40%">
 	<tr><td> Your Username: <input type="text" size=20 name="username" value = "gretchenrubin"> 
 	</td><td> Podcast Title: <input type="text" size=20 name="pTitle" value = "Happier"> 
 	</td><td> Episode Title: <input type="text" size=40 name="eTitle" value = "Little Happier - Travel Demand"> 
-	</td><td> Description: <input type="text" size=70 name="description" value= "Lessons of “induced travel demand” applies to our lives">
+	</td><td> Description: <input type="text" size=70 name="description" value= "Lessons of 'induced travel demand' applies to our lives">
 	</td><td><input type = "submit" name = "submit" value="Submit here"/>
 	</table>
 	</form>

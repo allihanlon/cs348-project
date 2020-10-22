@@ -83,7 +83,7 @@ if($checkQuery){
 	} else {
 		// the entry does not exist in the database, so we'll need to insert it
 		
-		//try to insert a new rating into the database 
+		//try to insert a new comment into the database 
 
 		$sql2 =  'INSERT INTO Comments(username, episodeID, description, dateCommented) VALUES (\''. $user . '\', \''. $episode . '\', \''. $comment . '\', \''. $dateCommented . '\')';
 
