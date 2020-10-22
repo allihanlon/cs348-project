@@ -32,7 +32,7 @@
 		if (description.value.length < 0 || description.value.length > 4000 || description.value == "")                                  
 	    { 
 	        window.alert("Description is either empty, too long."); 
-	        email.focus(); 
+	        email.focus();
 	        return false; 
 	    }
 	}
@@ -65,7 +65,7 @@
 	        return false; 
 	    }
 	
-		if (description.value.length < 0 || description.value.length > 4000 || description.value == "")                                  
+		if (description.value.length < 0 || description.value.length > 800 || description.value == "")                                  
 	    { 
 	        window.alert("Episode description is either empty or too long."); 
 	        email.focus(); 
