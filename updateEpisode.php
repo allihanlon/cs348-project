@@ -1,4 +1,5 @@
 <?php
+require 'rb.php';
 
 $Ptitle = $ETitle = $user = $description = $updateQuery = $episodeID  = $episode = $update = $episodeIDQuery = "";
 
@@ -20,18 +21,33 @@ function test_input($data)
   return $data;
 }
  
-$servername = "mydb.itap.purdue.edu";
-$username = "g1117061";
-$password = "!@Pod2020";
-$dbname = "g1117061"; 
-// Create connectioninclude 'like.php';
+ 
+//-------ORM-------//
+//establish connection to the db
+R::setup('mysql:host=mydb.itap.purdue.edu; dbname=g1117061',"g1117061", "!@Pod2020");
+R::debug(false);
+$isConnected = R::testConnection();
+					
+//find the bean that has the correct username and save it
+$sql3 = 'SELECT username FROM Podcast WHERE username = "'.$user.'" AND podcastTitle = "'.$Ptitle.'";';
+$rows = R::getRow($sql3);
+$userBean = R::convertToBean('user', $rows);
+//closes the connection used for ORM
+R::close();
+//-------ORM-------//
 
-$conn = mysqli_connect($servername, $username, $password , $dbname);
-// Check connectioninclude 'like.php';
+if (count($rows) == 0) {
+	echo "This is not your podcast! Please only add episodes for your own podcast.";
+} else {
+	$servername = "mydb.itap.purdue.edu";
+	$username = "g1117061";
+	$password = "!@Pod2020";
+	$dbname = "g1117061"; 
 
-if (!$conn) {
-	die("Connection failed: " . mysqli_connect_error());
-}
+	$conn = mysqli_connect($servername, $username, $password , $dbname);
+	if (!$conn) {
+		die("Connection failed: " . mysqli_connect_error());
+	}
 
 //Find the episodeID that matches the podcast and the episode title
 $sql =  'SELECT episodeID FROM Episode WHERE podcastTitle = \''. $Ptitle . '\' AND episodeTitle =  \''. $Etitle . '\';';
@@ -40,25 +56,7 @@ $episodeIDQuery = mysqli_query($conn, $sql);
 if($episodeIDQuery){
 	
 	if (mysqli_num_rows($episodeIDQuery) > 0) { // there must be one episode that exists with these attributes, so the host must want to edit it
-
-		while($row = mysqli_fetch_assoc($episodeIDQuery)) { //grab the appropriate episodeID
-			$episode = $row['episodeID'];
-		}
-		
-		//Update the podcast description that the host chooses
-		$update = 'UPDATE Episode SET episodeTitle =\''. $Etitle . '\', description=\''. $description . '\' WHERE episodeID=\''. $episode . '\';';
-		echo $update;
-		$updateQuery = mysqli_query($conn, $update);
-
-		//Print the request
-		if($updateQuery){
-		    echo "Updated record successfully<br>";
-			echo "Podcast Title: " . $Ptitle . "<br>";	
-			echo "Episode Title: " . $Etitle . "<br>";
-			echo "Description: " . $description . "<br>";
-		} else {
-			echo "Failed to update the episode information. <br>";
-		}
+		echo "That podcast episode already exists! Please enter a new episode title.";
 		
 	} else { //either the episodeID doesnt exist because the host put in incorrect information, or the podcast title is wrong!
 		//Find out if the podcast title exists in the database
@@ -71,7 +69,7 @@ if($episodeIDQuery){
 				//try to insert a new episode into the database 
 
 				$sql2 =  'INSERT INTO Episode(episodeTitle, podcastTitle, description) VALUES (\''. $Etitle . '\', \''. $Ptitle . '\', \''. $description . '\');';
-				echo $sql2. "<br>";
+				// echo $sql2. "<br>";
 				$result = mysqli_query($conn, $sql2);
 
 				if ($result) {
@@ -88,10 +86,13 @@ if($episodeIDQuery){
 		} //end if podcastQuery statement
 	}//end if numrows episodeQuery statement
 } // end episode ID query
+	mysqli_close($conn);
+}
 
-
-$home = "https://web.ics.purdue.edu/~g1117061";
+$home = "https://web.ics.purdue.edu/~g1117061/HostForms";
 echo "Click <a href=$home>here</a> to return to the home page";
+
+
 
 ?>
 

@@ -8,6 +8,42 @@
 	<link rel="icon" href="peaspod.jpeg" type="image/png" sizes="16x16">
 	
 	<script> 
+		function ValidateListener(){ 
+	    var username = document.forms["listenerForm"]["username"]; 
+		var Ptitle = document.forms["listenerForm"]["Ptitle"]; 
+		var ETitle = document.forms["listenerForm"]["ETitle"]; 
+		var date_ = document.forms["listenerForm"]["dateListened"]; 
+   
+	
+		if (username.value.length < 0 || username.value.length > 20 || username.value == "")                                  
+	    { 
+	        window.alert("Username is either empty, too long, or does not include a '@'."); 
+	        email.focus(); 
+	        return false; 
+	    }
+		
+		if (Ptitle.value.length < 0 || Ptitle.value.length > 100 || Ptitle.value == "")                                  
+	    { 
+	        window.alert("Podcast title is either empty, too long, or does not include a '@'."); 
+	        email.focus(); 
+	        return false; 
+	    }
+		
+		if (Etitle.value.length < 0 || Etitle.value.length > 100 || Etitle.value == "")                                  
+	    { 
+	        window.alert("Episode title is either empty, too long, or does not include a '@'."); 
+	        email.focus(); 
+	        return false; 
+	    }
+	
+		if (date_.value == "" )                                  
+	    { 
+	        window.alert("Date is  empty."); 
+	        email.focus(); 
+	        return false; 
+	    }
+	}
+	
 	function ValidateGuest(){ 
 	    var username = document.forms["guestForm"]["username"]; 
 		var title = document.forms["guestForm"]["title"]; 
@@ -167,6 +203,42 @@
 	        return false; 
 	    }
 	}
+	
+	function ValidateEpisode(){ 
+	    var username = document.forms["episodeForm"]["username"]; 
+		var pTitle = document.forms["episodeForm"]["pTitle"]; 
+		var eTitle = document.forms["episodeForm"]["eTitle"]; 
+		var description = document.forms["episodeForm"]["description"];
+   
+	
+		if (username.value.length < 0 || username.value.length > 20 || username.value == "")                                  
+	    { 
+	        window.alert("Username is either empty or too long."); 
+	        email.focus(); 
+	        return false; 
+	    }
+		
+		if (pTitle.value.length < 0 || pTitle.value.length > 100 || pTitle.value == "")                                  
+	    { 
+	        window.alert("Podcast title is either empty or too long."); 
+	        email.focus(); 
+	        return false; 
+	    }
+		
+		if (eTitle.value.length < 0 || eTitle.value.length > 100 || eTitle.value == "")                                  
+	    { 
+	        window.alert("Episode title is either empty or too long."); 
+	        email.focus(); 
+	        return false; 
+	    }
+	
+		if (description.value.length < 0 || description.value.length > 800 || description.value == "")                                  
+	    { 
+	        window.alert("Episode description is either empty or too long."); 
+	        email.focus(); 
+	        return false; 
+	    }
+	}
 	</script>
 
 	
@@ -179,6 +251,21 @@
 
 
 <div class="container"> <!-- beginning of the forms-->
+
+	<div class = "Listeners">
+	
+	<h4>Mark a Podcast Episode as 'Listened':</h4>
+	<form name = "listenerForm" onsubmit="return ValidateListener()" action="listener.php" method = "post">
+	
+	<table width= "40%">
+	<tr><td> Your Username: <input type="text" size=20 name="username" value = "johnsmith"> 
+	</td><td> Podcast Title: <input type="text" size=20 name="Ptitle" value = "Girls Gotta Eat"> 
+	</td><td> Episode Title: <input type="text" size=20 name="Etitle" value = "Does Age Matter?"> 
+	</td><td> Date Listened: <input type="date" size=12 name="dateListened"  value="<?php echo date('Y-m-d'); ?>">
+	</td><td><input type = "submit" name = "submit" value="Submit here" />
+	</table>
+	</form>
+	</div> <!--end guest request div-->
 	
 	<div class = "Guest Request">
 	
@@ -244,12 +331,90 @@
 	</form>
 	</div><!--end comments table div-->
 	
+	
+	
+	<div class = "Generate Suggestions">
+	
+	<h4>Search Podcasts by Genre:</h4>
+	<form name = "podcastGenre" method = "post">
+	
+	<table width= "50%">
+	<tr><td> Genre: <select id="genre", name = "genre">
+						<option value = "Comedy">Comedy</option>
+						<option value = "News">News</option>
+						<option value = "Society and Culture">Society and Culture</option>
+						<option value = "Sports">Sports</option>
+						<option value = "True Crime">True Crime</option>
+						<option value = "Other">Other</option></select></td>
+	</td><td><input type = "submit" name = "submit" value="Submit here" />
+	</table>
+	</form>
+	
+	</div><!--end comments table div-->
 		  	 
 </div> <!--end of the forms -->
-	
-	
 
+		<?php
+		
+		$genre = "";
 
+		if ($_SERVER["REQUEST_METHOD"] == "POST") 
+		{
+		   $genre = test_input($_POST["genre"]);
+		   //header("Location:https://web.ics.purdue.edu/~g1117061/ShowEpisodes.php");
+		}
+
+		function test_input($data) 
+		{
+		  $data = trim($data);
+		  $data = stripslashes($data);
+		  $data = htmlspecialchars($data);
+  
+		  return $data;
+		}
+		
+		//include "include/redirect.php";
+ 		$servername = "mydb.itap.purdue.edu";
+ 		$username = "g1117061";
+ 		$password = "!@Pod2020";
+ 		$dbname = "g1117061"; 
+ 		// Create connection
+ 		$conn = mysqli_connect($servername, $username, $password , $dbname);
+ 		// Check connection
+ 		if (!$conn) {
+ 		die("Connection failed: " . mysqli_connect_error());
+ 		}
+ 		//echo "Connected successfully<br><br>";
+		
+ 		/////////////////////////////////////////////////////
+ 		//print Podcast by Genre table
+		$sql =  'SELECT podcastTitle FROM Podcast WHERE genre = \''. $genre . '\' ORDER BY podcastTitle DESC;';
+ 		$result = mysqli_query($conn, $sql);
+ 		if($result){
+			
+ 			echo "<h3 style= 'text-align:left;'>Podcast List for category: '$genre':</h3>";
+ 		} else {
+ 			 echo "Error: " . $sql . "<br>" . mysqli_error($conn) . "<br>";
+ 		}
+		?>
+        <table border = 1,class = "genreList">
+		<?php
+ 		
+
+ 		if (mysqli_num_rows($result) > 0) {
+			echo "<th> Podcasts: </th>";
+ 			while($row = mysqli_fetch_assoc($result)) {
+					
+ 					echo "<tr style = text-align:left>"; // start row
+ 					echo "<td style='height:100px, width:100px'>" . $row['podcastTitle']. "</td>";
+ 					echo "</tr>"; // end row
+ 			}
+ 			echo "</table>";
+ 		} else {
+ 			echo "There are not results matching the genre '$genre'.";
+ 		}
+ 		?>
+	
 
 </div> <!--end main-->
 

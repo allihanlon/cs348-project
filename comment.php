@@ -1,7 +1,21 @@
+
+<html>
+<title>Comment</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+	
+	<link rel="icon" href="peaspod.jpeg" type="image/png" sizes="16x16">
+</head>
+
+<body>
+<h1> Two Peas in a Podcast Comment Page </h1>
+
 <?php
+/* Tell mysqli to throw an exception if an error occurs */
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-
-$Ptitle = $Etitle= $user = $comment = $dateLiked = $episodeID = $episodeIDQuery = "";
+$Ptitle = $Etitle= $user = $comment = $dateLiked = $episodeID = $episodeIDQuery = $checkListen = $listenQuery = "";
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
@@ -65,38 +79,89 @@ if($checkQuery){
 			$commentID = $row['commentID'];
 		}
 		
-		//there must be at least one row in the result, so we can update the entry in the DB for both the comment and the date
-		$update = 'UPDATE Comments SET description =\''. $comment . '\', dateCommented=\''. $dateCommented . '\' WHERE commentID=\''. $commentID . '\';';
-		echo $update;
-		$updateQuery = mysqli_query($conn, $update);
-		//grab the rating ID
-		if($updateQuery){
-		    echo "Updated record successfully<br>";
+
+		/* Start transaction */
+		$conn->autocommit(FALSE); //need to turn off autocommit or else this page will be sent to the db
+		//set the isolation level to just lock one row
+		mysqli_query($conn, "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;");
+		mysqli_query($conn, "START TRANSACTION;");
+	        //echo "UPDATE Comments SET description = \''. $comment . '\', dateCommented= \''. $dateCommented . '\' WHERE commentID=\''. $commentID . '\' ;";
+			
+
+		try {
+			$sql = 'UPDATE Comments SET description = \''. $comment . '\', dateCommented= \''. $dateCommented . '\' WHERE commentID='. $commentID . ';';
+			mysqli_query($conn, $sql);
+
+			//$sql = "UPDATE Comments SET description=?, dateCommented=? WHERE commentID=?";
+			//$stmt= $conn->prepare($sql);
+			//$stmt->bind_param("ssi", $comment, $dateCommented, $commentID);	// let SQL know that you are looking for 2 strings and an integer ("si")
+			//$stmt->execute();
+
+			/* If code reaches this point without errors then commit the data in the database */
+			mysqli_commit($conn);
+
+			echo "Updated record successfully<br>";
 			echo "Podcast Title: " . $Ptitle . "<br>";
 			echo "Podcast Episode: " . $Etitle . "<br>";
 			echo "Your Comment: " . $comment . "<br>";
 			echo "Date Liked: " . $dateLiked . "<br>";
-		} else {
-			echo "Failed to update the comment. <br>";
+
+		} catch (mysqli_sql_exception $exception) {
+			mysqli_rollback($conn);
+			echo "<br>threw error.<br>";
+			throw $exception;
+			echo $exception;
 		}
+
+		$conn->autocommit(TRUE);
+		
+		// Will also need to add them to the Listen table, if they are not in it yet
+		$checkListen =  'SELECT listenerID FROM Listen WHERE username = \''. $user . '\'AND episodeTitle=\''. $Etitle . '\';';
+		$listenQuery = mysqli_query($conn, $checkListen);
+		
+		if ($listenQuery) {
+			if (mysqli_num_rows($listenQuery) > 0) {
+				// echo "already a listener";
+			} else {
+				// the entry does not exist in the database, so we'll need to insert it
+				//try to insert a new rating into the database 
+				$sql = "INSERT INTO Listen(username, episodeTitle, dateListened) VALUES (?,?,?)";
+				$stmt= $conn->prepare($sql);
+				$stmt->bind_param("sss", $user, $Etitle, $dateCommented);	// let SQL know that you are looking for 3 string variables ("sss")
+				$stmt->execute();
+			}
+		}
+
 		
 	} else {
 		// the entry does not exist in the database, so we'll need to insert it
-		
 		//try to insert a new comment into the database 
+		$sql = "INSERT INTO Comments(username, episodeID, description, dateCommented) VALUES (?,?,?,?)";
+		$stmt= $conn->prepare($sql);
+		$stmt->bind_param("ssss", $user, $episode, $comment, $dateCommented);	// let SQL know that you are looking for 4 string variables ("ssss")
+		$stmt->execute();
 
-		$sql2 =  'INSERT INTO Comments(username, episodeID, description, dateCommented) VALUES (\''. $user . '\', \''. $episode . '\', \''. $comment . '\', \''. $dateCommented . '\')';
-
-		$result = mysqli_query($conn, $sql2);
-
-		if ($result) {
-		    echo "New record created successfully<br>";
-			echo "Podcast Title: " . $Ptitle . "<br>";
-			echo "Podcast Episode: " . $Etitle . "<br>";
-			echo "Your Comment: " . $comment . "<br>";
-			echo "Date Commented: " . $dateCommented . "<br>";
-		} else {
-		    echo "";
+		echo "New record created successfully<br>";
+		echo "Podcast Title: " . $Ptitle . "<br>";
+		echo "Podcast Episode: " . $Etitle . "<br>";
+		echo "Your Comment: " . $comment . "<br>";
+		echo "Date Commented: " . $dateCommented . "<br>";
+		
+		// Will also need to add them to the Listen table, if they are not in it yet
+		$checkListen =  'SELECT listenerID FROM Listen WHERE username = \''. $user . '\'AND episodeTitle=\''. $Etitle . '\';';
+		$listenQuery = mysqli_query($conn, $checkListen);
+		
+		if ($listenQuery) {
+			if (mysqli_num_rows($listenQuery) > 0) {
+				// echo "already a listener";
+			} else {
+				// the entry does not exist in the database, so we'll need to insert it
+				//try to insert a new rating into the database 
+				$sql = "INSERT INTO Listen(username, episodeTitle, dateListened) VALUES (?,?,?)";
+				$stmt= $conn->prepare($sql);
+				$stmt->bind_param("sss", $user, $Etitle, $dateCommented);	// let SQL know that you are looking for 3 string variables ("sss")
+				$stmt->execute();
+			}
 		}
 		
 	}

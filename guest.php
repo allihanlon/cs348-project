@@ -1,5 +1,7 @@
 <?php
 
+//ORM Redbean Library
+require 'rb.php'; 
 
 $title = $user = $guest = $dateReq = "";
 
@@ -29,27 +31,60 @@ $servername = "mydb.itap.purdue.edu";
 $username = "g1117061";
 $password = "!@Pod2020";
 $dbname = "g1117061"; 
+
 // Create connection
 $conn = mysqli_connect($servername, $username, $password , $dbname);
+
 // Check connection
 if (!$conn) {
 die("Connection failed: " . mysqli_connect_error());
 }
-//echo "Connected successfully<br><br>";
+
+//-------ORM-------//
+//establish connection to the db
+R::setup('mysql:host=mydb.itap.purdue.edu; dbname=g1117061',"g1117061", "!@Pod2020");
+R::debug(true);
+
+//find the bean that has the correct commentID and save it
+//--//$sql3 = 'DELETE FROM Comments WHERE commentID = '.$comNum.';';
+//--//$rows = R::getCell($sql3);
+//--//$returnedBean = R::convertToBeans('Comments', $rows);
+//--//$comToDel = $returnedBean[0];
+
+//delete the bean
+//--//R::trash($comToDel);
+
+//closes the connection used for ORM
 
 
-$sql =  'INSERT INTO UserGuestRequest(username, podcastTitle, guest, dateRequested) VALUES (\''. $user . '\', \''. $title . '\', \''. $guest . '\', \''. $dateReq . '\')';
+//create a new bean of type UserGuestRequest
+$guestBean = R::dispense( 'UserGuestRequest' );
 
-$result = mysqli_query($conn, $sql);
+//add the properties of the guest to the bean
+$guestBean->username = $user;
+$guestBean->podcastTitle = $title;
+$guestBean->guest = $guest;
+$guestBean->dateRequested = $dateReq;
+//store the bean in the DB (insert the row into the table)
+R::store( $guestBean );
 
-if ($result) {
-    echo "New record created successfully<br>";
-	echo "Podcast Title: " . $title . "<br>";
-	echo "Guest Requested: " . $guest . "<br>";
-	echo "Date of Request: " . $dateReq . "<br>";
-} else {
-    echo "Error: " . $sql . "<br>" . mysqli_error($conn) . "<br>";
-}
+
+R::close();
+//-------ORM-------//
+
+
+
+
+// Prepared Statement to insert topic suggestion
+//-- $sql = "INSERT INTO UserGuestRequest(username, podcastTitle, guest, dateRequested) VALUES (?,?,?,?)";
+//-- $stmt= $conn->prepare($sql);
+//-- $stmt->bind_param("ssss", $user, $title, $guest, $dateReq);	// let SQL know that you are looking for 4 string variables ("ssss")
+//-- $stmt->execute();
+
+echo "New record created successfully<br>";
+echo "Podcast Title: " . $title . "<br>";
+echo "Guest Requested: " . $guest . "<br>";
+echo "Date of Request: " . $dateReq . "<br>";
  
 $home = "https://web.ics.purdue.edu/~g1117061";
 echo "Click <a href=$home>here</a> to return to the home page";

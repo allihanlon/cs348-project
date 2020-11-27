@@ -1,7 +1,7 @@
 <?php
 
 
-$Ptitle = $Etitle= $user = $rating = $dateLiked = $episodeID = $episodeIDQuery = "";
+$Ptitle = $Etitle= $user = $rating = $dateLiked = $episodeID = $episodeIDQuery = $checkListen = $listenQuery = "";
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
@@ -65,46 +65,69 @@ if($checkQuery){
 			$ratingID = $row['ratingID'];
 		}
 		
-		//there must be at least one row in the result, so we can update the entry in the DB
-		$update = 'UPDATE Likes SET rating =\''. $rating . '\' WHERE ratingID=\''. $ratingID . '\';';
-		//echo $update;
-		$updateQuery = mysqli_query($conn, $update);
+		//there must be at least one row in the result, so we can update the entry in the DB	
+		$sql = "UPDATE Likes SET rating=? WHERE ratingID=?";
+		$stmt= $conn->prepare($sql);
+		$stmt->bind_param("si", $rating, $ratingID);	// let SQL know that you are looking for 1 string and 1 integer ("si")
+		$stmt->execute();
+		
 		//grab the rating ID
-		if($updateQuery){
-		    echo "Updated record successfully<br>";
-			echo "Podcast Title: " . $Ptitle . "<br>";
-			echo "Podcast Episode: " . $Etitle . "<br>";
-			echo "Your Rating: " . $rating . "<br>";
-			echo "Date Liked: " . $dateLiked . "<br>";
-		} else {
-			echo "Failed to update the rating. <br>";
+		echo "Updated record successfully<br>";
+		echo "Podcast Title: " . $Ptitle . "<br>";
+		echo "Podcast Episode: " . $Etitle . "<br>";
+		echo "Your Rating: " . $rating . "<br>";
+		echo "Date Liked: " . $dateLiked . "<br>";
+		
+		// Will also need to add them to the Listen table, if they are not in it yet
+		$checkListen =  'SELECT listenerID FROM Listen WHERE username = \''. $user . '\'AND episodeTitle=\''. $Etitle . '\';';
+		$listenQuery = mysqli_query($conn, $checkListen);
+		
+		if ($listenQuery) {
+			if (mysqli_num_rows($listenQuery) > 0) {
+				// echo "already a listener";
+			} else {
+				// the entry does not exist in the database, so we'll need to insert it
+				//try to insert a new rating into the database 
+				$sql = "INSERT INTO Listen(username, episodeTitle, dateListened) VALUES (?,?,?)";
+				$stmt= $conn->prepare($sql);
+				$stmt->bind_param("sss", $user, $Etitle, $dateCommented);	// let SQL know that you are looking for 3 string variables ("sss")
+				$stmt->execute();
+			}
 		}
 		
 	} else {
 		// the entry does not exist in the database, so we'll need to insert it
-		
 		//try to insert a new rating into the database 
+		$sql = "INSERT INTO Likes(username, episodeID, rating, dateLiked) VALUES (?,?,?,?)";
+		$stmt= $conn->prepare($sql);
+		$stmt->bind_param("ssss", $user, $episode, $rating, $dateLiked);	// let SQL know that you are looking for 4 string variables ("ssss")
+		$stmt->execute();
 
-		$sql2 =  'INSERT INTO Likes(username, episodeID, rating, dateLiked) VALUES (\''. $user . '\', \''. $episode . '\', \''. $rating . '\', \''. $dateLiked . '\')';
-
-		$result = mysqli_query($conn, $sql2);
-
-		if ($result) {
-		    echo "New record created successfully<br>";
-			echo "Podcast Title: " . $Ptitle . "<br>";
-			echo "Podcast Episode: " . $Etitle . "<br>";
-			echo "Your Rating: " . $rating . "<br>";
-			echo "Date Liked: " . $dateLiked . "<br>";
-		} else {
-		    echo "";
+		echo "New record created successfully<br>";
+		echo "Podcast Title: " . $Ptitle . "<br>";
+		echo "Podcast Episode: " . $Etitle . "<br>";
+		echo "Your Rating: " . $rating . "<br>";
+		echo "Date Liked: " . $dateLiked . "<br>";
+		
+		// Will also need to add them to the Listen table, if they are not in it yet
+		$checkListen =  'SELECT listenerID FROM Listen WHERE username = \''. $user . '\'AND episodeTitle=\''. $Etitle . '\';';
+		$listenQuery = mysqli_query($conn, $checkListen);
+		
+		if ($listenQuery) {
+			if (mysqli_num_rows($listenQuery) > 0) {
+				// echo "already a listener";
+			} else {
+				// the entry does not exist in the database, so we'll need to insert it
+				//try to insert a new rating into the database 
+				$sql = "INSERT INTO Listen(username, episodeTitle, dateListened) VALUES (?,?,?)";
+				$stmt= $conn->prepare($sql);
+				$stmt->bind_param("sss", $user, $Etitle, $dateLiked);	// let SQL know that you are looking for 3 string variables ("sss")
+				$stmt->execute();
+			}
 		}
 		
 	}
 }
-
-
-
-
 
  
 $home = "https://web.ics.purdue.edu/~g1117061";
