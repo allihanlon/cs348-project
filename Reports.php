@@ -27,7 +27,9 @@
 	
  		/////////////////////////////////////////////////////
  		//print Top 5 Episodes table
-		$sql = 'SELECT L.episodeTitle as Episode, E.podcastTitle as Title, COUNT(L.listenerID) as Listens FROM Listen L JOIN Episode E ON E.episodeTitle =L.episodeTitle GROUP BY (E.podcastTitle) ORDER BY COUNT(L.ListenerID) DESC LIMIT 5';
+		$sql = 'SELECT L.episodeTitle as Episode, E.podcastTitle as Title, COUNT(L.listenerID) as Listens 
+			FROM Listen L JOIN Episode E ON E.episodeTitle =L.episodeTitle 
+			GROUP BY (E.podcastTitle) ORDER BY COUNT(L.ListenerID) DESC LIMIT 5';
 		//$sql =  'SELECT episodeTitle FROM Episode WHERE podcastTitle = \''. $title . '\' ORDER BY episodeID DESC;';
  		$result = mysqli_query($conn, $sql);
  		if($result){
