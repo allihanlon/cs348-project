@@ -5,7 +5,6 @@
 	<link rel="icon" href="peaspod.jpeg" type="image/png" sizes="16x16">
 </head>
 </html>
-hanlona
 <?php
 
 include "include/redirect.php";
@@ -52,7 +51,7 @@ if(count($rows) !=0){
   
 	$conn = mysqli_connect($servername, $username, $password , $dbname);
 	mysqli_query($conn, "UPDATE User SET password = '$new_password' WHERE securityQuestion = '$question_answer' AND username='$u_username'");
-	echo "Password successfull updated! Click link below to redirect to the login page: ";
+	echo "Password successfully updated! Click link below to redirect to the login page: ";
 	echo "<br><a href=https://web.ics.purdue.edu/~g1117061/>Login Page</a>";
 	mysqli_close($conn);
 }
