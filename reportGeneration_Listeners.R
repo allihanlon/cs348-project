@@ -18,7 +18,9 @@ dbExecute(mydb, "START TRANSACTION;")
 # Execute access in a try-catch
 tryCatch( {
         # Queries for getting a selected podcast; associated podcast host
-        listeners <- dbGetQuery(mydb, paste("SELECT COUNT(*), dateListened FROM Listen as L JOIN Episode as E ON L.episodeTitle = E.episodeTitle WHERE E.podcastTitle = '",title,"' GROUP BY dateListened;", sep = ""))
+        listeners <- dbGetQuery(mydb, paste("SELECT COUNT(*), dateListened 
+                                            FROM Listen as L JOIN Episode as E ON L.episodeTitle = E.episodeTitle 
+                                            WHERE E.podcastTitle = '",title,"' GROUP BY dateListened;", sep = ""))
         podcastHost <- dbGetQuery(mydb, paste("SELECT P.username FROM Podcast as P WHERE podcastTitle = '",title,"';", sep = ""))
 
         # Name the file

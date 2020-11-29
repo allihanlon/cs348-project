@@ -16,7 +16,9 @@ dbExecute(mydb, "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;")
 dbExecute(mydb, "START TRANSACTION;")
 tryCatch( {
         # query for counting the podcast ratings by date for a selected podcast
-        likes <- dbGetQuery(mydb, paste("SELECT COUNT(rating),dateLiked FROM Likes JOIN Episode ON Likes.episodeID = Episode.EpisodeID WHERE Episode.podcastTitle = '",podcastTitle,"' GROUP BY dateLiked;", sep = ""))
+        likes <- dbGetQuery(mydb, paste("SELECT COUNT(rating),dateLiked 
+                                        FROM Likes JOIN Episode ON Likes.episodeID = Episode.EpisodeID 
+                                        WHERE Episode.podcastTitle = '",podcastTitle,"' GROUP BY dateLiked;", sep = ""))
         podcastHost <- dbGetQuery(mydb, paste("SELECT username FROM Podcast WHERE podcastTitle = '",podcastTitle,"';", sep = ""))
 
         #names the file
