@@ -1,10 +1,9 @@
 <?php
 
-//ORM Redbean Library
-require 'rb.php'; 
+// ORM Redbean Library
+// require 'rb.php'; 
 
 $title = $user = $guest = $dateReq = "";
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
@@ -13,10 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
    $guest = test_input($_POST["guest"]);
    $dateReq = test_input(date('Y-m-d', strtotime($_POST["dateRequested"])));
 }
-
-
-//echo $title;
-//echo "<br>". $author;
 
 function test_input($data) 
 {
@@ -38,12 +33,12 @@ $conn = mysqli_connect($servername, $username, $password , $dbname);
 // Check connection
 if (!$conn) {
 die("Connection failed: " . mysqli_connect_error());
-}
+} 
 
 //-------ORM-------//
 //establish connection to the db
-R::setup('mysql:host=mydb.itap.purdue.edu; dbname=g1117061',"g1117061", "!@Pod2020");
-R::debug(true);
+//R::setup('mysql:host=mydb.itap.purdue.edu; dbname=g1117061',"g1117061", "!@Pod2020");
+//R::debug(false);
 
 //find the bean that has the correct commentID and save it
 //--//$sql3 = 'DELETE FROM Comments WHERE commentID = '.$comNum.';';
@@ -53,33 +48,26 @@ R::debug(true);
 
 //delete the bean
 //--//R::trash($comToDel);
-
 //closes the connection used for ORM
-
-
 //create a new bean of type UserGuestRequest
-$guestBean = R::dispense( 'UserGuestRequest' );
+//$guestBean = R::dispense( 'UserGuestRequest' );
 
 //add the properties of the guest to the bean
-$guestBean->username = $user;
-$guestBean->podcastTitle = $title;
-$guestBean->guest = $guest;
-$guestBean->dateRequested = $dateReq;
+//$guestBean->username = $user;
+//$guestBean->podcastTitle = $title;
+//$guestBean->guest = $guest;
+//$guestBean->dateRequested = $dateReq;
 //store the bean in the DB (insert the row into the table)
-R::store( $guestBean );
-
-
-R::close();
+//R::store( $guestBean );
+//R::close();
 //-------ORM-------//
 
 
-
-
 // Prepared Statement to insert topic suggestion
-//-- $sql = "INSERT INTO UserGuestRequest(username, podcastTitle, guest, dateRequested) VALUES (?,?,?,?)";
-//-- $stmt= $conn->prepare($sql);
-//-- $stmt->bind_param("ssss", $user, $title, $guest, $dateReq);	// let SQL know that you are looking for 4 string variables ("ssss")
-//-- $stmt->execute();
+$sql = "INSERT INTO UserGuestRequest(username, podcastTitle, guest, dateRequested) VALUES (?,?,?,?)";
+$stmt= $conn->prepare($sql);
+$stmt->bind_param("ssss", $user, $title, $guest, $dateReq);	// let SQL know that you are looking for 4 string variables ("ssss")
+$stmt->execute();
 
 echo "New record created successfully<br>";
 echo "Podcast Title: " . $title . "<br>";
